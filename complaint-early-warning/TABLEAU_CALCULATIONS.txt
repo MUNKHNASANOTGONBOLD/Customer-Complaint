@@ -1,0 +1,27 @@
+Create each calculation separately using Analysis > Create Calculated Field.
+Calculated fields are definitions, not a workbook tested in Tableau Desktop.
+
+DATA SOURCE: complaints.csv (name it Complaints)
+Complaint Count = COUNTD([complaint_id])
+Recent Complaints = COUNTD(IF [is_recent] = 1 THEN [complaint_id] END)
+Known Responses = SUM(IF [timely] = "Yes" OR [timely] = "No" THEN 1 ELSE 0 END)
+Late Responses = SUM(IF [timely] = "No" THEN 1 ELSE 0 END)
+Late Response Rate = IF [Known Responses] > 0 THEN [Late Responses] / [Known Responses] END
+Recent Known Responses = SUM(IF [is_recent] = 1 AND ([timely] = "Yes" OR [timely] = "No") THEN 1 ELSE 0 END)
+Recent Late Responses = SUM(IF [is_recent] = 1 AND [timely] = "No" THEN 1 ELSE 0 END)
+Recent Late Response Rate = IF [Recent Known Responses] > 0 THEN [Recent Late Responses] / [Recent Known Responses] END
+Review Trend Count = COUNTD(IF [is_review_period] = 1 THEN [complaint_id] END)
+Month = DATETRUNC('month', [received_date])
+Week = DATETRUNC('week', [received_date])
+
+DATA SOURCE: investigation_queue.csv (name it Signals)
+Review Candidates = SUM(IF [signal_count] > 0 THEN 1 ELSE 0 END)
+Rising Groups = SUM(IF [volume_signal] THEN 1 ELSE 0 END)
+Late Response Groups = SUM(IF [late_signal] THEN 1 ELSE 0 END)
+Late Response Share = IF [known] > 0 THEN [late] / [known] END
+Review Reason = IF [volume_signal] AND [late_signal] THEN "Rising volume + late responses" ELSEIF [volume_signal] THEN "Rising volume" ELSEIF [late_signal] THEN "Late responses" ELSE "No flag" END
+
+Boolean fields must be Boolean: convert volume_signal and late_signal if needed.
+Format Rate and Share fields as Percentage with 1 decimal.
+volume_ratio is a decimal multiple, NOT a percentage.
+Do not sum late_pct: it is already in percentage points. Use Late Response Share.
