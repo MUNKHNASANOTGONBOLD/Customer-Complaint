@@ -1,9 +1,7 @@
 # Consumer Complaint Early Warning
 
-CFPB public credit-card complaints → Python / SQLite → Google Sheets → Tableau.
+I built this workflow to help a reviewer decide which changes in public credit-card complaints to investigate. It loads CFPB records into SQLite, applies documented review rules, and exports the evidence behind each flag.
 
-Recovered original project source, including ingestion, review rules, dashboard,
-Tableau preparation, Windows scheduling and Google Sheets upload scripts.
 Raw data, generated exports, local configuration and credentials are excluded.
 
 ## Run locally
